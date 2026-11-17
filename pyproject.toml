@@ -1,0 +1,12 @@
+[project]
+name = "cryoet-fm-lab"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "cryoet-data-portal>=4.9.0",
+    "mrcfile>=1.5.4",
+    "numpy>=2.5.5",
+    "torch>=2.15.0",
+    "wandb>=0.31.0",
+    "zarr>=3.4.2",
+]

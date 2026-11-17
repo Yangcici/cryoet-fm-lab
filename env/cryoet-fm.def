@@ -1,0 +1,36 @@
+Bootstrap: docker
+From: nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04
+
+# Build (on the cluster):
+#   apptainer build env/cryoet-fm.sif env/cryoet-fm.def
+# Run:
+#   apptainer exec --nv env/cryoet-fm.sif python scripts/wandb_smoke.py
+#
+# The image holds the locked Python environment only. Code and data are
+# bind-mounted at run time, so the image is rebuilt only when uv.lock changes.
+
+%files
+    pyproject.toml /opt/app/pyproject.toml
+    uv.lock /opt/app/uv.lock
+
+%post
+    apt-get update
+    apt-get install -y --no-install-recommends ca-certificates curl git
+    rm -rf /var/lib/apt/lists/*
+
+    curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR=/usr/local/bin sh
+
+    export UV_PYTHON_INSTALL_DIR=/opt/python
+    export UV_PROJECT_ENVIRONMENT=/opt/venv
+    export UV_LINK_MODE=copy
+    cd /opt/app
+    uv sync --frozen --no-install-project --python 3.12
+    uv cache clean
+
+%environment
+    export PATH=/opt/venv/bin:$PATH
+    export VIRTUAL_ENV=/opt/venv
+    export PYTHONUNBUFFERED=1
+
+%runscript
+    exec python "$@"

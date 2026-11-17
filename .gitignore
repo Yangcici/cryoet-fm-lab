@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+
+# data and large artifacts never go in git
+data/
+*.mrc
+*.zarr/
+*.sif
+wandb/
+logs/
+*.out
+*.err
